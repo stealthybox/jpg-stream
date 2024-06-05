@@ -7,6 +7,20 @@ of [libjpeg](http://www.ijg.org) to JavaScript using [Emscripten](http://emscrip
 
     npm install @stealthybox/jpg-stream
 
+### Building
+
+Compiling this package currently depends on Emscripten v1.
+This fork publishes a public docker image that can be used like so:
+```shell
+make docker-compile
+```
+You can also rebuild the image for yourself:
+```shell
+ORG=$USER make docker-image
+ORG=$USER make docker-push
+ORG=$USER make docker-compile
+```
+
 For the browser, you can build using [Browserify](http://browserify.org/).
 
 ## Decoding
