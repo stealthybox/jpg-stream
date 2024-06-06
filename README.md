@@ -3,6 +3,13 @@
 A streaming JPEG encoder and decoder for Node and the browser. It is a direct compilation
 of [libjpeg](http://www.ijg.org) to JavaScript using [Emscripten](http://emscripten.org/).
 
+This fork:
+- makes the build repeatable using docker, nix, and emscripten v1
+- exposes the libjpeg optimize_coding option on `JPEGEncoder` as `optimizeCoding`
+- is compiled with emscripten's `ALLOW_MEMORY_GROWTH=1`
+
+Original embind work done by @devongovett in [jpg-stream](https://github.com/devongovett/jpg-stream)
+
 ## Installation
 
     npm install @stealthybox/jpg-stream
@@ -75,11 +82,24 @@ You can encode a JPEG by writing or piping pixel data to a `JPEGEncoder` stream.
 You can set the `quality` option to a number between 1 and 100 to control the
 size vs quality tradeoff made by the encoder.
 
+The `optimizeCoding` option defaults to `false` and will use the JPEG standard
+huffman tables to produce output data as input pixels are processed.
+
+You can set the `optimizeCoding` option to `true` to tell the encoder optimize the
+huffman tables used to code/compress the image data. This requires a second pass
+over all of 8x8 MCU's (after DCT and quantization has been performed). This can
+result in significantly smaller jpeg output, but at the cost of blocking the output
+stream until the input has been fully processed.
+Memory usage with `optimizeCoding` enabled is much higher.
+This fork has been compiled with ALLOW_MEMORY_GROWTH=1 to support the internal buffer
+needed for libjpeg to compute the tables.
+
 The JPEG encoder supports writing data in the RGB, grayscale, or CMYK color spaces.
 If you need to convert from another unsupported color space, first pipe your data
 through the [color-transform](https://github.com/devongovett/color-transform) module.
 
 ```javascript
+var PNGDecoder = require('png-stream/decoder');
 var JPEGEncoder = require('jpg-stream/encoder');
 var ColorTransform = require('color-transform');
 
@@ -87,6 +107,12 @@ var ColorTransform = require('color-transform');
 fs.createReadStream('in.png')
   .pipe(new PNGDecoder)
   .pipe(new JPEGEncoder({ quality: 80 }))
+  .pipe(fs.createWriteStream('out.jpg'));
+
+// produce a smaller, optimized JPEG
+fs.createReadStream('in.png')
+  .pipe(new PNGDecoder)
+  .pipe(new JPEGEncoder({ quality: 80, optimizeCoding: true }))
   .pipe(fs.createWriteStream('out.jpg'));
   
 // colorspace conversion to convert from RGBA to RGB
