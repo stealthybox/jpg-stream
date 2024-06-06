@@ -5,7 +5,7 @@ of [libjpeg](http://www.ijg.org) to JavaScript using [Emscripten](http://emscrip
 
 ## Installation
 
-    npm install jpg-stream
+    npm install @stealthybox/jpg-stream
 
 For the browser, you can build using [Browserify](http://browserify.org/).
 
