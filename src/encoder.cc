@@ -44,6 +44,7 @@ JPEGEncoder::JPEGEncoder() : callback(val::undefined()) {
   dest->free_in_buffer = BUF_SIZE;
     
   quality = 100;
+  optimizeCoding = false;
   decoding = false;
   scanlineLength = 0;
   buf.resize(0);
@@ -60,6 +61,7 @@ void JPEGEncoder::encode(uint8_t *buffer, size_t length) {
   if (!decoding) {
     jpeg_set_defaults(&enc);
     jpeg_set_quality(&enc, quality, TRUE);
+    enc.optimize_coding = optimizeCoding ? TRUE : FALSE; // bool -> boolean
     jpeg_start_compress(&enc, TRUE);
     decoding = true;
   }

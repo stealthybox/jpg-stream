@@ -36,6 +36,7 @@ JPEGEncoder.prototype._start = function(done) {
   this.encoder.height = this.format.height;
   this.encoder.colorSpace = this.format.colorSpace;
   this.encoder.quality = this.format.quality || 100;
+  this.encoder.optimizeCoding = this.format.optimizeCoding;
   done();
 };
 

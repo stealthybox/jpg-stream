@@ -46,6 +46,14 @@ public:
     quality = q;
   }
   
+  bool getOptimizeCoding() const {
+    return optimizeCoding;
+  }
+
+  void setOptimizeCoding(bool oc) {
+    optimizeCoding = oc;
+  }
+
   std::string getColorSpace() const {
     switch (enc.in_color_space) {
       case JCS_RGB:
@@ -92,6 +100,7 @@ private:
   struct jpeg_error_mgr err;
     
   int quality;
+  bool optimizeCoding;
   std::string colorSpace;
   val callback;
   bool decoding;
@@ -107,6 +116,7 @@ EMSCRIPTEN_BINDINGS(encoder) {
     .property("width", &JPEGEncoder::getWidth, &JPEGEncoder::setWidth)
     .property("height", &JPEGEncoder::getHeight, &JPEGEncoder::setHeight)
     .property("quality", &JPEGEncoder::getQuality, &JPEGEncoder::setQuality)
+    .property("optimizeCoding", &JPEGEncoder::getOptimizeCoding, &JPEGEncoder::setOptimizeCoding)
     .property("colorSpace", &JPEGEncoder::getColorSpace, &JPEGEncoder::setColorSpace)
     .function("encode", &JPEGEncoder::encodeStr)
     .function("end", &JPEGEncoder::end)
